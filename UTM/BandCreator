@@ -1,0 +1,31 @@
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class BandCreator {
+
+private String regExOp = "/(\\d+)([+|*|\\-|\\/])(\\d+)/gm";
+private String regExBin = "([01]+)";
+private String firstNumber;
+private String operator;
+private String secondNumber;
+
+public Band(String _inputData) {
+    Pattern patternOp = Pattern.compile(regExOp);
+    Pattern patternBin = Pattern.compile(regExBin);
+    Matcher matcher = patternOp.matcher(_inputData);
+    Matcher matcherBin = patternBin.matcher(_inputData);
+    
+    if(matcher.matches()) {
+        String firstNumber = matcher.group(1);
+        String operator = matcher.group(2);
+        String secondNumber = matcher.group(3);
+    
+    } else if (matcherBin.matches()) {
+        this.inputData = _inputData;
+    }
+
+}
+
+p
+
+}
