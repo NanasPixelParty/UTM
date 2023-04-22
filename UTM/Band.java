@@ -1,100 +1,113 @@
-import java.util.ArrayList;
-
 
 public class Band {
-
-    // Bandsymbol 0 ist 0
-    String B0 = "0";
-    // Bandsymbol 1 ist 00
-    String B1 = "00";
-    // Bandsymbol BLANK ist 000
-    String BB = "000";
-    // In dieser Array List sind die Informationspakete die von den 11 getrennt sind
-    private ArrayList<String> transitions;
-    // In dieser Array List sind die kleinen Pakete die von 1 getrennt sind
-    private static ArrayList<String> smallPackages;
     // Das ist mein Teststring um die Maschine zu testen
-    private static final String TESTSTRING = "010010001010011000101010010110001001001010011000100010001010";
-    
+    private String band;
+    private static final String TESTSTRING = "010010001010011000101010010110001001001010011000100010001010111101010";
+    private int headPosition = 0;
 
-
-    /**
-     * Diese Funktion kann aufgerufen werden, wenn man den eingegebenen binärcodierten String
-     * auslesen und bearbeiten möchte. Die Funktion gibt eine ArrayList zurück, die alle
-     * Informationspakete enthält. Diese Pakete sind wiederum in einer ArrayList gespeichert.
-     * Das erste Array enthält die ganze Übergangsfunktion, das zweite Array die kleineren Teile der Übergangsfunktion.
-     * 
-     * @return ArrayList<ArrayList<String>>
-     */
-    public ArrayList<ArrayList<String>> getTransitionList() {
-        // Hier werden die Übergänge aus dem String ausgelesen und in eine ArrayList gespeichert
-        readTransitions(TESTSTRING);
-        //Dies wird die formatierte Übergangsfunktions ArrayList sein
-        ArrayList<ArrayList<String>> formatedTransitions = new ArrayList<ArrayList<String>>();
-        // Hier werden die einzelnen Übergänge aus der ArrayList ausgelesen und erneut anhand der codierung formatiert 
-        // und in die formatedTransitions ArrayList gespeichert
-        for (int i = 0; i < transitions.size(); i++) {
-            ArrayList<String> transitionParts = new ArrayList<String>();
-            transitionParts = getTransition(getTransitions().get(i));
-            formatedTransitions.add(transitionParts);
-        }
-        // Die formatierte Übergangsfunktion wird zurückgegeben
-        return formatedTransitions;
+    public Band() {
+        InputData inputData = new InputData();
+        inputData.splitInput(TESTSTRING);
+        inputData.readTransitions(inputData.splitInput(TESTSTRING)[0]);
+        band = inputData.splitInput(TESTSTRING)[1];
     }
 
-    /**
-     * Diese Funktion liest die Übergänge aus dem String aus und speichert sie in einer ArrayList
-     * 
-     * @param input
-     * @return ArrayList<String>
-     */
-    private ArrayList<String> readTransitions(String input) {
-        transitions = new ArrayList<String>();
+    public String getBand() {
+        return this.band;
+    }
 
-        int smallPackageStart = 0;
+    public Band(String withBand) {
+        band = withBand;
+    }
 
-        for (int i = 1; i < input.length(); i++) {
+    public void printBand() {
+        printBand(15);
+    }
 
-            if (input.charAt(i) == '1' && input.charAt(i - 1) == '1') {
-                String newPackage = input.substring(smallPackageStart, i - 1);
-                transitions.add(newPackage);
-                smallPackageStart = i + 1;
+    public boolean isEnd() {
+        return headPosition == band.length() - 1;
+    }
+
+    public void printBand(int padding) {
+        StringBuilder sb = new StringBuilder();
+        StringBuilder sbHead = new StringBuilder();
+        sbHead.append('>');
+        sb.append('|');
+
+        int start = headPosition - padding;
+        if (start < 0) {
+            start = 0;
+        }
+
+        int beforeHead = 0;
+        int afterHead = 0;
+
+        for (int i = start; i < band.length(); i++) {
+            sb.append(band.charAt(i));
+
+            if (i == headPosition) {
+                sbHead.append('^');
+            } else {
+                sbHead.append(' ');
+            }
+
+            if(i < headPosition) {
+                beforeHead++;
+            }
+            if(i > headPosition) {
+                afterHead++;
+            }
+
+            if (i - start >= 2 * padding) {
+                break;
             }
         }
-        transitions.add(input.substring(smallPackageStart, input.length()));
-        return transitions;
+        sb.insert(1,"_".repeat(padding-beforeHead));
+        sb.append("_".repeat(padding-afterHead));
+        sb.append('|');
+        sbHead.insert(1," ".repeat(padding-beforeHead));
+        sbHead.append(" ".repeat(padding-afterHead));
+        sbHead.append('<');
+
+        System.out.println(sb.toString());
+        System.out.println(sbHead.toString());
     }
 
-
-    /**
-     * @return Die ArrayList mit den Übergängen
-     */
-    private ArrayList<String> getTransitions() {
-        return transitions;
+    public void write(char c) {
+        StringBuilder sb = new StringBuilder(band);
+        sb.setCharAt(headPosition, c);
+        band = sb.toString();
     }
 
-    /**
-     * Diese Funktion liest die kleineren Übergänge aus dem String der ArrayListe mit den grossen Übergängen aus und speichert sie in einer ArrayList
-     * @param transition Nimmt die Liste mit alls Übergängen entgegen
-     * @return Die ArrayList mit den kleineren Übergängen
-     */
-    private ArrayList<String> getTransition(String transition) {
-        smallPackages = new ArrayList<String>();
+    public char read() {
+        return band.charAt(headPosition);
+    }
 
-        int newPackageStart = 0;
-
-        for (int j = 1; j < transition.length(); j++) {
-            if (transition.charAt(j) == '1') {
-                String newSmallPackage = transition.substring(newPackageStart, j);
-                smallPackages.add(newSmallPackage);
-                newPackageStart = j + 1;
-            }
+    public void moveHeadLeft() {
+        if (headPosition > 0) {
+            headPosition--;
         }
-        smallPackages.add(transition.substring(newPackageStart, transition.length()));
-
-        return smallPackages;
     }
 
+    public void moveHeadRight() {
+        if (headPosition < band.length() - 1) {
+            headPosition++;
+        }
+    }
 
+    public static void main(String[] args) {
+        Band tb = new Band();
+        tb.printBand();
 
+        for (int i = 0; i < 60; i++) {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            tb.moveHeadRight();
+            tb.printBand();
+        }
+    }
 }
