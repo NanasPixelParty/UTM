@@ -61,8 +61,10 @@ public class Band {
         sb.append('|');
 
         int start = headPosition - padding;
+        int end = start + padding*2;
         if (start < 0) {
             start = 0;
+            end = start + padding;
         }
 
         int beforeHead = 0;
@@ -84,11 +86,12 @@ public class Band {
                 afterHead++;
             }
 
-            if (i - start >= 2 * padding) {
+            if (i >= end) {
                 break;
             }
         }
         sb.insert(1,"_".repeat(padding-beforeHead));
+        System.out.println(afterHead);
         sb.append("_".repeat(padding-afterHead));
         sb.append('|');
         sbHead.insert(1," ".repeat(padding-beforeHead));
