@@ -97,7 +97,7 @@ public class InputTranslator {
                     translatedBandInput.get(i).add(index, X3);
                     break;
                 default:
-                    translatedBandInput.get(i).add(index, "X" + bandsymbol.length());
+                    translatedBandInput.get(i).add(index, "X");
             }
 
         }
