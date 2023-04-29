@@ -3,20 +3,19 @@
 /*
  * Diese Klasse repräsentiert das Band der TM
  */
+
+import javax.imageio.spi.RegisterableService;
+
 public class Band {
-    // Das ist mein Teststring um die Maschine zu testen
     private String band;
-    private static final String TESTSTRING = "010010001010011000101010010110001001001010011000100010001010111101010";
     private int headPosition = 0;
 
     /**
-     * Default Konstruktor um das Band zu testen
+     * Konstruktor um Band aus spezifischem String zu erstellen
+     * @param withBand
      */
-    public Band() {
-        InputData inputData = new InputData();
-        inputData.splitInput(TESTSTRING);
-        inputData.readTransitions(inputData.splitInput(TESTSTRING)[0]);
-        band = inputData.splitInput(TESTSTRING)[1];
+    public Band(String withBand) {
+        band = withBand;
     }
 
     /**
@@ -28,14 +27,6 @@ public class Band {
     }
 
     /**
-     * Konstruktor um Band aus spezifischem String zu erstellen
-     * @param withBand
-     */
-    public Band(String withBand) {
-        band = withBand;
-    }
-
-    /**
      * Gebe das Band mit 15 Zeichen vor und nach dem Leseschreiblopf aus
      */
     public void printBand() {
@@ -43,63 +34,42 @@ public class Band {
     }
 
     /**
-     * Sagt ob das Band zu Ende ist
-     * @return true = band ist zu ende false = band ist nicht zu ende
-     */
-    public boolean isEnd() {
-        return headPosition == band.length() - 1;
-    }
-
-    /**
      * Erstellt die optische Darstellung auf der Konsole des bandes
      * @param padding
      */
     public void printBand(int padding) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sbBand = new StringBuilder();
         StringBuilder sbHead = new StringBuilder();
+        String localBand = String.format("%s%s%s", "_".repeat(padding),band,"_".repeat(padding));
         sbHead.append('>');
-        sb.append('|');
+        sbBand.append('|');
 
-        int start = headPosition - padding;
+
+        int start = headPosition;
         int end = start + padding*2;
-        if (start < 0) {
-            start = 0;
-            end = start + padding;
-        }
 
-        int beforeHead = 0;
-        int afterHead = 0;
+        for (int i = start; i < localBand.length(); i++) {
+            sbBand.append(localBand.charAt(i));
 
-        for (int i = start; i < band.length(); i++) {
-            sb.append(band.charAt(i));
-
-            if (i == headPosition) {
+            if (i == headPosition+padding) {
                 sbHead.append('^');
             } else {
                 sbHead.append(' ');
-            }
-
-            if(i < headPosition) {
-                beforeHead++;
-            }
-            if(i > headPosition) {
-                afterHead++;
             }
 
             if (i >= end) {
                 break;
             }
         }
-        sb.insert(1,"_".repeat(padding-beforeHead));
-        System.out.println(afterHead);
-        sb.append("_".repeat(padding-afterHead));
-        sb.append('|');
-        sbHead.insert(1," ".repeat(padding-beforeHead));
-        sbHead.append(" ".repeat(padding-afterHead));
+        sbBand.append('|');
         sbHead.append('<');
 
-        System.out.println(sb.toString());
+        System.out.println(sbBand.toString());
         System.out.println(sbHead.toString());
+    }
+
+    public void printBandRaw() {
+        System.out.println(this.band);
     }
 
     /**
@@ -108,7 +78,11 @@ public class Band {
      */
     public void write(char c) {
         StringBuilder sb = new StringBuilder(band);
-        sb.setCharAt(headPosition, c);
+        if(headPosition >= band.length()) {
+            sb.append(c);
+        } else {
+            sb.setCharAt(headPosition, c);
+        }
         band = sb.toString();
     }
 
@@ -117,6 +91,10 @@ public class Band {
      * @return
      */
     public char read() {
+        if(headPosition >= band.length()) {
+            return '_';
+        }
+
         return band.charAt(headPosition);
     }
 
@@ -124,35 +102,13 @@ public class Band {
      * Bewegt den Lese-Schreibkopf nach links
      */
     public void moveHeadLeft() {
-        if (headPosition > 0) {
-            headPosition--;
-        }
+        headPosition--;
     }
 
     /**
      * Bewegt den Leseschreibkopf nach rechts
      */
     public void moveHeadRight() {
-        if (headPosition < band.length() - 1) {
-            headPosition++;
-        }
-    }
-
-
-    //Das ist nur zum Testen, kann sonst ignoriert werden. das Prograamm wird in der Klasse UTM.java gestartet
-    public static void main(String[] args) {
-        Band tb = new Band();
-        tb.printBand();
-
-        for (int i = 0; i < 60; i++) {
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            tb.moveHeadRight();
-            tb.printBand();
-        }
+        headPosition++;
     }
 }

@@ -7,7 +7,7 @@ public class StateMachine {
     private HashMap<String,String> transitionMap;
 
     private String state = "Q1";
-    private String acceptedState = "Q2";
+    private final String acceptedState = "Q2";
     private int step = 0;
 
     //Hier bauen wir quasi unsere State Machine zusammen um später durch die verschiedenen Zustände iterieren zu können,
@@ -22,8 +22,6 @@ public class StateMachine {
         this.band = new Band(splittedInput[1]);
         //Die Übergangsfunktionen werden aus der binär codierten TM ersttellt
         bandInput.readTransitions(splittedInput[0]);
-        //Das ist aktuell noch zum überprüfen welche Übergangsfunktionen wir haben
-        System.out.println(bandInput.getTransitionList());
         //hier wird das binäre in Menschlich verständlich notierte übergangsfunktionen übersetzt
         InputTranslator it = new InputTranslator(bandInput.getTransitionList());
         //hier werden die Übergnagsfunktionen aus einer ArrayList in eine HashMap übersetzt
@@ -43,7 +41,6 @@ public class StateMachine {
             transitionMap.put(key, value);
 
         }
-        System.out.println(transitionMap.toString());
         return transitionMap;
         
     } 
@@ -80,16 +77,28 @@ public class StateMachine {
                 break;
             default:
                 System.err.println("hä?");
+                throw new StateMachienException("Do not know where to move head");
         }
     }
 
     /**
      * Hier geben wir aus in welchem Zustand wir uns aktuell befinden und wie viele Steps wir bisher gemacht haben
      */
-    public void printMachieneState() {
+    public void printMachineState() {
         System.out.println("Current State: "+this.state);
         System.out.println("Current Step: "+this.step);
         this.band.printBand();
+    }
+
+    public int countCharacters(char c) {
+        /*int count = 0;
+        for(int i = 0; i < this.band.getBand().length(); i++) {
+            if(this.band.getBand().charAt(i) == c) {
+                count++;
+            }
+        }
+        return count;*/
+        return (int)this.band.getBand().chars().filter(lc -> lc == (int)c).count();
     }
 
     /**
@@ -101,6 +110,6 @@ public class StateMachine {
         step++;
         doTransition(band.read());
 
-        return this.state.equals("Q2");
+        return this.state.equals(acceptedState);
     }
 }
