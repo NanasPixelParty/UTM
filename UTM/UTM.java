@@ -26,21 +26,21 @@ public class UTM {
             finalMachine = choice + createMULinput(inputBand);
         }
         System.out.println("Gibt S für Step-Mode und D für direktes Ergebnis ein:");
-        String isStepMode = scanner.nextLine();
-        int millis = 0;
-        if(isStepMode.equalsIgnoreCase("S")) {
-            millis = 100; // Step-Modus
-        }
+        String choosenMode = scanner.nextLine();
+
+        boolean isStepMode = choosenMode.equalsIgnoreCase("S");
         // Hier einfach String einfügen um jeweile TM inkls. Input zu starten
         sm = new StateMachine(finalMachine);
 
         try {
             sm.printMachineState();
             while (!sm.step()) {
-                sm.printMachineState();
-                // Das ist quasi der "Step-Mode"
-                    Thread.sleep(millis);
-                
+                if(isStepMode) {
+                    sm.printMachineState();
+                    // Das ist quasi der "Step-Mode")
+                    Thread.sleep(100);
+                    scanner.nextLine();
+                }
             }
         } catch (StateMachienException | InterruptedException e) {
             sm.printMachineState();

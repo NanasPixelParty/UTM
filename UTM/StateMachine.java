@@ -87,7 +87,7 @@ public class StateMachine {
     public void printMachineState() {
         System.out.println("Current State: "+this.state);
         System.out.println("Current Step: "+this.step);
-        this.band.printBand();
+        this.band.printBand(50);
     }
 
     public int countCharacters(char c) {
