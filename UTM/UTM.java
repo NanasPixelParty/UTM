@@ -17,7 +17,7 @@ public class UTM {
         String choice = chooseMaschine(selectedString);
 
         if(choice.equals(TESTSTRING) || choice.equals(TESTSTRING2)) {
-            System.out.println("Gib dein eingabeBand binär an.");
+            System.out.println("Gib dein Eingabeband binär an.");
             inputBand = scanner.nextLine();
             finalMachine = choice + inputBand;
         } else {
@@ -52,6 +52,9 @@ public class UTM {
         System.exit(0);
     }
 
+    /**
+     * choooses the machine
+     */
     public static String chooseMaschine(String choice) {
         switch (choice) {
             case "1":
